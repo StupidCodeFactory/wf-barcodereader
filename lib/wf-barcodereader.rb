@@ -18,8 +18,12 @@ module Wf
           found = Processor.process File.expand_path('snapshot.jpg')
           max_try -= 1
         end
-        unless found
+        if !found
           puts "Could not find any barecodes"
+        else
+          found.each do |result|
+            puts "Code: #{result.data} - Type: #{result.symbology} - Quality: #{result.quality}"
+          end
         end
       end
     end
@@ -58,9 +62,6 @@ module Wf
             clean
             return false
           else
-            # processed.each do |result|
-            #   puts "Code: #{result.data} - Type: #{result.symbology} - Quality: #{result.quality}"
-            # end
             clean
             return processed
           end

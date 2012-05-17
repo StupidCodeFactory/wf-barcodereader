@@ -2,8 +2,8 @@
 require File.expand_path('../lib/wf-barcodereader/version', __FILE__)
 
 Gem::Specification.new do |gem|
-  gem.authors       = ["Yann Marquet"]
-  gem.email         = ["ymarquet@gmail.com"]
+  gem.authors       = ["Yann Marquet", "Thomas Pelletier"]
+  gem.email         = ["ymarquet@gmail.com", "pelletier.thomas@gmail.com"]
   gem.description   = %q{This gem provide a way to scan QR barecode with apple isight or face time intergrated webcam  }
   gem.summary       = %q{This gem provide a way to scan QR barecode with apple isight or face time intergrated webcam  }
   gem.homepage      = "https://github.com/StupidCodeFactory/wf-barcodereader"

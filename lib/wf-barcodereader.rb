@@ -6,19 +6,23 @@ module Wf
     class Base
       # include FileUtils
       class << self
-        def sharpen
-          puts system 'which ls'
-        end
-        def process(io)
-          # cmd = system 'which convert'
-          # raise "Could not find convert command. Have you installed imagemagick?" unless cmd
-          # begin
-          #   system  "#{cmd} -unsharp 10x3+10+0 #{io} "
-          # rescue Exception => e
-          #   puts 'Could not process you image'
-          # end
 
-          input = Magick::Image.read(io).first
+        def sharpen(io)
+          extension = File.extname(io)
+          File.basename(io).gsub(extension, '') + '_conv' + extension
+        end
+        
+        def process(io)
+          sharpened_file = sharpen(io)
+          cmd = system 'which convert'
+          raise "Could not find convert command. Have you installed imagemagick?" unless cmd
+          begin
+            system  "#{cmd} -unsharp 10x3+10+0 #{io} #{converted_name}"
+          rescue Exception => e
+            puts 'Could not process you image'
+          end
+
+          input = Magick::Image.read(sharpened_file).first
           # convert to PGM
           input.format = 'PGM'
 

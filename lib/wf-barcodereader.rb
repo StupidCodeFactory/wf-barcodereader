@@ -1,28 +1,43 @@
 require "wf-barcodereader/version"
 require 'RMagick'
+require 'fileutils'
 require 'zbar'
 module Wf
   module Barcodereader
-    class Base
-      # include FileUtils
+
+    class Command
+      def initialize
+        
+      end
+    end
+
+    class Processor
+      @@temp_dir = '/tmp/barcodereader'
       class << self
+        include FileUtils
 
         def sharpen(io)
           extension = File.extname(io)
-          File.basename(io).gsub(extension, '') + '_conv' + extension
+          sharpened_file_name = File.basename(io).gsub(extension, '') + '_conv' + extension
+          begin
+            puts "processing #{io} to #{sharpened_file_name}"
+            command = "convert -unsharp 10x3+10+0 #{io} #{sharpened_file_name}"
+            system command
+            return File.join(@@temp_dir, sharpened_file_name)
+          rescue Exception => e
+            clean
+            puts 'Could not process you image'
+            puts 'Failed running: ' + command
+            puts e.backtrace
+          end
         end
         
         def process(io)
-          sharpened_file = sharpen(io)
-          cmd = system 'which convert'
-          raise "Could not find convert command. Have you installed imagemagick?" unless cmd
-          begin
-            system  "#{cmd} -unsharp 10x3+10+0 #{io} #{converted_name}"
-          rescue Exception => e
-            puts 'Could not process you image'
-          end
+          raise "Could not find convert command. Have you installed imagemagick?" unless system('which convert')
+          FileUtils.mkdir @@temp_dir unless Dir.exists?(@@temp_dir)
+          FileUtils.cd @@temp_dir
 
-          input = Magick::Image.read(sharpened_file).first
+          input = Magick::Image.read(sharpen(io)).first
           # convert to PGM
           input.format = 'PGM'
 
@@ -32,6 +47,12 @@ module Wf
           image.process.each do |result|
             puts "Code: #{result.data} - Type: #{result.symbology} - Quality: #{result.quality}"
           end
+          
+          clean
+        end
+        
+        def clean
+          rm_f Dir.glob(@@temp_dir + '/*')
         end
       end
     end

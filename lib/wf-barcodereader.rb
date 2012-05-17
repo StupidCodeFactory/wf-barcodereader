@@ -21,7 +21,7 @@ module Wf
           sharpened_file_name = File.basename(io).gsub(extension, '') + '_conv' + extension
           begin
             puts "processing #{io} to #{sharpened_file_name}"
-            command = "convert -unsharp 10x3+10+0 #{io} #{sharpened_file_name}"
+            command = "convert -colorspace Gray -level 0%,100%,0.5 -unsharp 5x3+10+0 -flop #{io} #{sharpened_file_name}"
             system command
             return File.join(@@temp_dir, sharpened_file_name)
           rescue Exception => e
@@ -44,7 +44,7 @@ module Wf
           # load the image from a string
           image = ZBar::Image.from_pgm(input.to_blob)
           processed = image.process
-          if processing.empty?
+          if processed.empty?
             puts "no barcode found"
             false
           else

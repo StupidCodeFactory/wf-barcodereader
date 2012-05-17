@@ -25,7 +25,7 @@ And then execute:
 
 
 ## Usage
-In you shell type:
+In your shell type:
 
 	$ barcode
 

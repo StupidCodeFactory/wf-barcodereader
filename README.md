@@ -1,24 +1,32 @@
 # Wf::Barcodereader
 
-TODO: Write a gem description
+This gem provide a way to scan QR barecode with apple isight or face time intergrated webcam  
+
+
 
 ## Installation
 
+Install imagemagick:
+
+	brew install imagemagick
+
+Install  [zbar](http://zbar.sourceforge.net/)
+
+	brew install zbar
+
 Add this line to your application's Gemfile:
 
-    gem 'wf-barcodereader'
+    gem 'wf-barcodereader', :git => 'https://github.com/StupidCodeFactory/wf-barcodereader'
 
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install wf-barcodereader
 
 ## Usage
+In you shell type:
 
-TODO: Write usage instructions here
+	$ barcode
 
 ## Contributing
 

@@ -4,9 +4,9 @@ require File.expand_path('../lib/wf-barcodereader/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Yann Marquet"]
   gem.email         = ["ymarquet@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.description   = %q{This gem provide a way to scan QR barecode with apple isight or face time intergrated webcam  }
+  gem.summary       = %q{This gem provide a way to scan QR barecode with apple isight or face time intergrated webcam  }
+  gem.homepage      = "https://github.com/StupidCodeFactory/wf-barcodereader"
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
@@ -16,4 +16,5 @@ Gem::Specification.new do |gem|
   gem.version       = Wf::Barcodereader::VERSION
   
   gem.add_dependency 'zbar'
+  gem.add_dependency 'rmagick'
 end

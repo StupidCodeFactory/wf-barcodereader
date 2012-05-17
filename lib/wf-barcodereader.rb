@@ -4,26 +4,39 @@ require 'fileutils'
 require 'zbar'
 module Wf
   module Barcodereader
-
+    TMP_DIR = '/tmp/barcodereader'
     class Command
+      include FileUtils
       def initialize
-        
+        FileUtils.mkdir TMP_DIR unless Dir.exists?(TMP_DIR)
+        cd TMP_DIR
+        found = false
+        max_try = 3
+        while !found && max_try > 0
+          sleep 3
+          system("imagesnap -q")
+          found = Processor.process File.expand_path('snapshot.jpg')
+          max_try -= 1
+        end
+        unless found
+          puts "Could not find any barecodes"
+        end
       end
     end
 
     class Processor
-      @@temp_dir = '/tmp/barcodereader'
+
       class << self
         include FileUtils
 
         def sharpen(io)
+          
           extension = File.extname(io)
-          sharpened_file_name = File.basename(io).gsub(extension, '') + '_conv' + extension
+          sharpened_file_name = File.join(TMP_DIR, File.basename(io).gsub(extension, '') + '_conv' + extension)
           begin
-            puts "processing #{io} to #{sharpened_file_name}"
-            command = "convert -colorspace Gray -level 0%,100%,0.5 -unsharp 5x3+10+0 -flop #{io} #{sharpened_file_name}"
+            command = "convert -auto-level -colorspace Gray -level 40%,60%,1 -unsharp 5x4+4+0 #{io} #{sharpened_file_name}"
             system command
-            return File.join(@@temp_dir, sharpened_file_name)
+            return sharpened_file_name
           rescue Exception => e
             clean
             puts 'Could not process you image'
@@ -33,10 +46,7 @@ module Wf
         end
         
         def process(io)
-          raise "Could not find convert command. Have you installed imagemagick?" unless system('which convert')
-          FileUtils.mkdir @@temp_dir unless Dir.exists?(@@temp_dir)
-          FileUtils.cd @@temp_dir
-
+          raise "Could not find convert command. Have you installed imagemagick?" unless system('which convert',  :out => '/dev/null')
           input = Magick::Image.read(sharpen(io)).first
           # convert to PGM
           input.format = 'PGM'
@@ -45,19 +55,19 @@ module Wf
           image = ZBar::Image.from_pgm(input.to_blob)
           processed = image.process
           if processed.empty?
-            puts "no barcode found"
-            false
+            clean
+            return false
           else
-            processed.each do |result|
-              puts "Code: #{result.data} - Type: #{result.symbology} - Quality: #{result.quality}"
-            end
+            # processed.each do |result|
+            #   puts "Code: #{result.data} - Type: #{result.symbology} - Quality: #{result.quality}"
+            # end
+            clean
+            return processed
           end
-          
-          clean
         end
         
         def clean
-          rm_f Dir.glob(@@temp_dir + '/*')
+          rm_f Dir.glob(TMP_DIR + '/*')
         end
       end
     end

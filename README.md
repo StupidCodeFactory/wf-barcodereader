@@ -1,6 +1,6 @@
 # Wf::Barcodereader
 
-This gem provide a way to scan QR barecode with apple isight or face time intergrated webcam  
+This gem provides a way to scan QR barecode with apple isight or face time intergrated webcam  
 This gem contains a binary of [imagesnap](http://iharder.sourceforge.net/current/macosx/imagesnap/), compiled on osx 10.7.4.
 If you get into trouble with imagesnap, try to install it yourself, via [homebrew](https://github.com/mxcl/homebrew) or from source. 
 

@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+$:.unshift(File.dirname(__FILE__) + '/../lib/')
+require 'irb'
+require 'irb/completion'
+require "wf-barcodereader"
+require "bundler/setup"
+
+Bundler.require
+ARGV.clear
+IRB.start

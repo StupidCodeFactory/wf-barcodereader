@@ -43,9 +43,14 @@ module Wf
 
           # load the image from a string
           image = ZBar::Image.from_pgm(input.to_blob)
-
-          image.process.each do |result|
-            puts "Code: #{result.data} - Type: #{result.symbology} - Quality: #{result.quality}"
+          processed = image.process
+          if processing.empty?
+            puts "no barcode found"
+            false
+          else
+            processed.each do |result|
+              puts "Code: #{result.data} - Type: #{result.symbology} - Quality: #{result.quality}"
+            end
           end
           
           clean

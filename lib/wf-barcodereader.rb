@@ -2,6 +2,9 @@ require "wf-barcodereader/version"
 require 'RMagick'
 require 'fileutils'
 require 'zbar'
+require 'rally_rest_api'
+require 'date'
+require 'active_support/core_ext'
 module Wf
   module Barcodereader
     TMP_DIR = '/tmp/barcodereader'
@@ -23,6 +26,38 @@ module Wf
         else
           found.each do |result|
             puts "Code: #{result.data} - Type: #{result.symbology} - Quality: #{result.quality}"
+
+            puts "Updating task on Rally..."
+
+
+            username = ENV["RALLY_EMAIL"]
+            password = ENV["RALLY_PASSWORD"]
+
+            rally = RallyRestAPI.new(username: username, password: password, version: "1.33")
+
+            project = rally.find(:project) { equal :name, 'Fork Handles' }.results.first
+            @iteration = rally.find(:iteration) { 
+              equal :project, project
+              less_than_equal :start_date, Date.today.to_formatted_s
+              greater_than_equal :end_date, Date.today.to_formatted_s 
+            }.results.last
+
+            pro_q = project.to_q
+            itr_q = @iteration.to_q
+
+
+            task = rally.find(:task) do
+              equal(:project, pro_q)
+              equal(:iteration, itr_q)
+              equal(:object_i_d, result.data)
+            end.results.first
+
+
+            task.update(state: "Completed")
+
+
+            puts "Task updated!"
+
           end
         end
       end

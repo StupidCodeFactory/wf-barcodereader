@@ -17,4 +17,7 @@ Gem::Specification.new do |gem|
   
   gem.add_dependency 'zbar'
   gem.add_dependency 'rmagick'
+  gem.add_dependency 'rally_rest_api'
+  gem.add_dependency 'builder'
+  gem.add_dependency 'activesupport'
 end

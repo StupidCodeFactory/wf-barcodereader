@@ -14,9 +14,9 @@ module Wf
         FileUtils.mkdir TMP_DIR unless Dir.exists?(TMP_DIR)
         cd TMP_DIR
         found = false
-        max_try = 3
+        max_try = 20
         while !found && max_try > 0
-          sleep 3
+          sleep 0.5
           system("imagesnap -q")
           found = Processor.process File.expand_path('snapshot.jpg')
           max_try -= 1
